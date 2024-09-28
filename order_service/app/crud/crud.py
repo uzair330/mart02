@@ -1,4 +1,6 @@
+
 from typing import Annotated, List
+from app.models.order_model import Order,OrderRequest
 from app.models.cart_model import Cart, CartCreate,CartWithItems, CartItem, CartUpdate, CartRequest,ItemBase,CartUpdate
 from fastapi import Depends, HTTPException
 from sqlmodel import select
@@ -27,17 +29,6 @@ async def get_carts(session: DATABASE_SESSION, user_id: UUID = Depends(userId_fr
             cart.total_amount = round(total_amount, 2)
     # print(carts[0])
     return cart
-
-
-# async def get_cartitems(session: DATABASE_SESSION, user_id: UUID = Depends(userId_from_token)):
-#     select_cart = select(CartItem).where(Cart.user_id == user_id)
-#     carts = session.exec(select_cart).all()
-#     if not carts:
-#         raise HTTPException(
-#             status_code=404,
-#             detail="No carts found for this user"
-#         )
-#     return carts
 
 
 
@@ -137,3 +128,22 @@ async def update_cart(
 
     session.refresh(db_cart)
     return db_cart    
+
+
+#======================Order crud functions==========================
+
+
+async def get_order(
+    session: DATABASE_SESSION, order_id:OrderRequest, user_id: UUID = Depends(userId_from_token)
+) -> Order:
+    statement = select(Order).where(Order.id == order_id, Order.user_id == user_id)
+    order = session.exec(statement).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    if order.items:
+        total_amount = 0.0
+        for item in order.items:
+            total_amount += item.price * item.quantity
+            order.total_amount = round(total_amount, 2)
+
+    return order

@@ -8,11 +8,14 @@ from app.crud.crud import (
     get_carts,
     create_cart
     ,update_cart,
-    get_cartitems
+    get_cartitems,
+    get_order
 )
 from sqlmodel import select
 
 from app.models.cart_model import CartWithItems,Cart,CartUpdate
+
+from app.models.order_model import Order
 
 router = APIRouter()
 
@@ -37,3 +40,7 @@ def update_cart(
     updated_cart: Annotated[CartUpdate, Depends(update_cart)],
 ):
     return updated_cart
+#==================================
+@router.get("/get_order", response_model=Order)
+def get_order(order: Annotated[Order, Depends(get_order)]):
+    return order
