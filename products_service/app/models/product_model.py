@@ -26,10 +26,13 @@ class ProductModel(ProductBase, TimestampMixin, table=True):
     # Relationship with OrderItem, linked via product_id
     order_items: List["OrderItem"] = Relationship(back_populates="product")
 
+# creating/updating products (for input)
+class ProductFormModel(ProductBase):
+    id: Optional[UUID] = None
 
 # Model to represent order items in an order
 class OrderItem(TimestampMixin, SQLModel, table=True):
-    id: UUID = Field(primary_key=True, default_factory=uuid4)  # Unique ID for the order item
+    order_id: UUID = Field(primary_key=True, default_factory=uuid4)  # Unique ID for the order item
     product_id: UUID = Field(foreign_key="productmodel.id")  # Foreign key to ProductModel
     product_name: str  # Name of the product at the time of ordering
     product_description: str  # Description of the product
@@ -37,12 +40,9 @@ class OrderItem(TimestampMixin, SQLModel, table=True):
     price: float = Field(gt=0.0)  # Price of the product at the time of ordering
 
     # Back reference to the product
+
     product: ProductModel = Relationship(back_populates="order_items")
 
-
-# creating/updating products (for input)
-class ProductFormModel(ProductBase):
-    id: Optional[UUID] = None
 
 
 # Model for deleting a product by its ID

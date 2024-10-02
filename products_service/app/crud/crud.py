@@ -39,32 +39,6 @@ def get_product_by_id(product_id:UUID, session:DATABASE_SESSION):
         }      
     return product_dict    
 
-# async def create_product(product:ProductFormModel, session: DATABASE_SESSION, user_id:Annotated[UUID, Depends(userId_from_token),Depends(kafka_producer)] ):
-#     product_id=uuid4()
-#     product_db = ProductModel(
-#         id=product_id,
-#         user_id=user_id,
-#         product_name=product.product_name,
-#         product_description=product.product_description,
-#         price=product.price,
-#         stock=product.stock
-#     )
-
-#     session.add(product_db)
-#     try:
-#         session.commit()
-#         session.refresh(product_db)
-#         #TODO Kafka message here for product create
-#     except Exception as error:
-#         session.rollback()
-#         raise HTTPException(
-#             status_code=400,
-#             detail=f"Error while creating product: {error}"
-#         )    
-#     session.refresh(product_db)
-#     product_create_topic="create_product_topic"
-#     kafka_producer(product_create_topic,product_db)
-#     return product_db    
 
 async def create_product(
     product: ProductFormModel, 

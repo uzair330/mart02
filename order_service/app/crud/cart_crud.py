@@ -1,13 +1,13 @@
 
 from typing import Annotated, List
-from app.models.order_model import Order,OrderRequest
+# from app.models.order_model import Order,OrderRequest
 from app.models.cart_model import Cart, CartCreate,CartWithItems, CartItem, CartUpdate, CartRequest,ItemBase,CartUpdate
 from fastapi import Depends, HTTPException
 from sqlmodel import select
 from app.auth.user_auth import userId_from_token
 from app.database.db import DATABASE_SESSION
 from uuid import UUID, uuid4
-from sqlalchemy import and_ 
+
 
 
 #-----------Card Crud Functions---------------
@@ -129,21 +129,3 @@ async def update_cart(
     session.refresh(db_cart)
     return db_cart    
 
-
-#======================Order crud functions==========================
-
-
-async def get_order(
-    session: DATABASE_SESSION, order_id:OrderRequest, user_id: UUID = Depends(userId_from_token)
-) -> Order:
-    statement = select(Order).where(Order.id == order_id, Order.user_id == user_id)
-    order = session.exec(statement).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    if order.items:
-        total_amount = 0.0
-        for item in order.items:
-            total_amount += item.price * item.quantity
-            order.total_amount = round(total_amount, 2)
-
-    return order
