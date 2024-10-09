@@ -11,6 +11,12 @@ DATABASE_URL = env("DATABASE_URL", cast=Secret)
 ALGORITHM = env("ALGORITHM", cast=str)
 SECRET_KEY = env("SECRET_KEY", cast=Secret)
 BOOTSTRAP_SERVER = env("BOOTSTRAP_SERVER", cast=str)
+ORDER_TOPIC = "order_topic"
+PRODUCT_TOPIC = "product_topic"
+
 TOKEN_EXPIRE_MINUTES = timedelta(
     minutes=int(env.get("TOKEN_EXPIRE_MINUTES"))
 )
+
+ORDER_KAFKA_TOPIC = "order_topic"
+KAFKA_CONSUMER_GROUP_ID_FOR_ORDER = "order_group"
